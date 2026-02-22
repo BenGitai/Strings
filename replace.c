@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------*/
 /* replace.c                                                          */
-/* Author: ???                                                        */
+/* Author: Benjamin Gitai                                             */
 /*--------------------------------------------------------------------*/
 
 #include "str.h"
@@ -17,12 +17,42 @@
    assumptions about the maximum number of replacements or the
    maximum number of characters in strings pcLine, pcFrom, or pcTo. */
 
-static size_t replaceAndWrite(const char *pcLine,
+static size_t replaceAndWrite(const char *pcLine, 
                               const char *pcFrom, const char *pcTo)
 {
-   /* Insert your code here. */
-}
+   size_t from_length;
+   size_t replacements = 0;
+   char *substring;
 
+   from_length = Str_getLength(pcFrom);
+
+   /* Handle the empty from-string edge case */
+   if (from_length == 0) {
+      printf("%s", pcLine);
+      return 0;
+   }
+
+   /* Loop while there are still matches to find */
+   while ((substring = Str_search(pcLine, pcFrom)) != NULL) {
+      /* Print everything before the match */
+      while (pcLine < substring) {
+         putchar(*pcLine);
+         pcLine++;
+      }
+
+      /* Print the replacement string and increment */
+      printf("%s", pcTo);
+
+      pcLine += from_length;
+      
+      replacements++;
+   }
+
+   /* Print whatever is left after the last match */
+   printf("%s", pcLine);
+
+   return replacements;
+}
 /*--------------------------------------------------------------------*/
 
 /* If argc is unequal to 3, then write an error message to stderr and
@@ -55,8 +85,9 @@ int main(int argc, char *argv[])
    pcFrom = argv[1];
    pcTo = argv[2];
 
-   while (fgets(acLine, MAX_LINE_SIZE, stdin) != NULL)
-      /* Insert your code here. */
+   while (fgets(acLine, MAX_LINE_SIZE, stdin) != NULL) {
+        uReplaceCount += replaceAndWrite(acLine, pcFrom, pcTo);
+   }
 
    fprintf(stderr, "%lu replacements\n", (unsigned long)uReplaceCount);
    return 0;
